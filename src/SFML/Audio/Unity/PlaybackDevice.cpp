@@ -91,7 +91,15 @@ struct PlaybackDevice::Impl
             // If this does cause issues we would have to expose setting this value
             // through the public API so the developer can set it to an appropriate
             // value depending on the audio data they intend to play
+#ifdef SFML_SYSTEM_EMSCRIPTEN
+            // On the web, miniaudio drives a ScriptProcessorNode on the browser's main thread, whose own
+            // buffer is already at least 256 frames: a 64-frame period makes it spend its time in the
+            // node graph and lets the playback skip chunks of audio (audible as constant crackling
+            // distortion). A larger period gives the main thread room, at the cost of latency.
+            maDeviceConfig.periodSizeInFrames = 2048;
+#else
             maDeviceConfig.periodSizeInFrames = 64;
+#endif
 
             if (const ma_result result = ma_device_init(&maContext, &maDeviceConfig, &maDevice); result != MA_SUCCESS)
                 return priv::MiniaudioUtils::fail("initialize the audio device", result);
