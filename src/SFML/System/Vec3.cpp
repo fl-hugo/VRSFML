@@ -25,4 +25,7 @@ template struct sf::Vec3<long double>;
 SFML_INSTANTIATE_VECTOR3_INTEGRAL_MEMBER_FUNCTIONS(bool)
 SFML_INSTANTIATE_VECTOR3_INTEGRAL_MEMBER_FUNCTIONS(int)
 SFML_INSTANTIATE_VECTOR3_INTEGRAL_MEMBER_FUNCTIONS(unsigned int)
+// On a 32-bit target size_t is unsigned int: the instantiation for it above is the same one, and a second one is an error.
+#if __SIZEOF_SIZE_T__ != __SIZEOF_INT__
 SFML_INSTANTIATE_VECTOR3_INTEGRAL_MEMBER_FUNCTIONS(::sf::base::SizeT)
+#endif
